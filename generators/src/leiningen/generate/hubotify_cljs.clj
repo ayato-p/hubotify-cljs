@@ -9,6 +9,9 @@
 (defn- snake-case [hyphenated]
   (str/replace hyphenated #"-" "_"))
 
+(defn- ->relative-path [path]
+  (str/replace-first path #"^scripts" "."))
+
 (defn- extract-build-config [project]
   (let [builds (get-in project [:cljsbuild :builds])]
     (->> (cond-> builds (map? builds) vals)
@@ -18,7 +21,7 @@
 (defn hubotify-cljs [project]
   (doseq [conf (extract-build-config project)
           :let [data {:module-name (snake-case (:main conf))
-                      :js-file-path (:output-to conf)}]]
+                      :js-file-path (->relative-path (:output-to conf))}]]
     (main/info (pr-str data))
     (main/info "Wrote:" (render-text "scripts/{{module-name}}.coffee" data))
     (tmpl/->files data ["scripts/{{module-name}}.coffee" (render "source.clj" data)])))
