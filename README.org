@@ -2,6 +2,10 @@
 
   Leiningen generators for hubot scripts with ClojureScript.
 
+  #+BEGIN_QUOTE
+  :bomb: This libraries still development. :bomb:
+  #+END_QUOTE
+
 ** License
 
    The MIT License (MIT)
