@@ -3,8 +3,8 @@
   https://github.com/vinta/hubot-reload-scripts/blob/master/src/reload-scripts.coffee"
   (:require-macros [fence.core :refer [+++]])
   (:require [cljs.nodejs :as nodejs]
-            [com.stuartsierra.component :as component]))
-
+            [com.stuartsierra.component :as component]
+            [hubotify-cljs.component.listener.proto :as proto]))
 
 (def fs (nodejs/require "fs"))
 (def path (nodejs/require "path"))
@@ -49,9 +49,14 @@
                           (catch js/Error err
                             (.error js/console "Error parsing JSON data from external-scripts.json: " err)))))))))
 
+(defn- activate-all-listeners! [robot listeners]
+  (doseq [l listeners]
+    (proto/activate l robot)))
+
 (defrecord Hubot [robot listeners]
   component/Lifecycle
   (start [c]
+    (activate-all-listeners! robot listeners)
     (assoc c :robot robot))
   (stop [c]
     (dissoc c :robot robot))
@@ -67,6 +72,7 @@
     (load-src-scripts! robot)
     (load-hubot-scripts! robot)
     (load-external-scripts! robot)
+    (activate-all-listeners! robot listeners)
     (+++ (.info js/console "Reloaded all scripts"))))
 
 (defn new-hubot [robot]
