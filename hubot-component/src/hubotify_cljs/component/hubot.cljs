@@ -72,7 +72,6 @@
     (load-src-scripts! robot)
     (load-hubot-scripts! robot)
     (load-external-scripts! robot)
-    (activate-all-listeners! robot listeners)
     (+++ (.info js/console "Reloaded all scripts"))))
 
 (defn new-hubot [robot]
